@@ -3,216 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ზოგადი ინტელექტის ქვიზი</title>
+    <title>პრემიუმ IQ ტესტი</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f5a623;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --card-bg: #ffffff;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --accent-neon: #6366f1;
+            --accent-green: #10b981;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --neon-pink: #f43f5e;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         header {
-            background-color: var(--primary-color);
-            color: white;
+            background: linear-gradient(135deg, #1e1b4b, #311042);
             text-align: center;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-bottom: 2px solid var(--accent-neon);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .main-container {
             display: flex;
             flex: 1;
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
-            margin: 20px auto;
+            margin: 30px auto;
             padding: 0 20px;
-            gap: 20px;
+            gap: 25px;
         }
 
         .sidebar {
             flex: 1;
-            background-color: #fff;
-            border: 2px dashed var(--secondary-color);
-            border-radius: 8px;
+            background-color: var(--card-dark);
+            border: 2px solid var(--neon-pink);
+            border-radius: 12px;
             padding: 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
+            gap: 20px;
             justify-content: center;
-            align-items: center;
-            min-width: 200px;
-            height: 400px;
-            position: sticky;
-            top: 20px;
+            min-width: 220px;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
         }
 
-        .sidebar h3 {
-            color: var(--secondary-color);
-            margin-bottom: 10px;
+        .adv-title {
+            color: var(--neon-pink);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
         }
 
-        .quiz-container {
-            flex: 3;
-            background-color: var(--card-bg);
+        .adv-box {
+            background: rgba(244, 63, 94, 0.1);
+            padding: 15px;
             border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--neon-pink);
+            font-weight: bold;
         }
 
-        .question-block {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+        .quiz-wrapper {
+            flex: 3;
+            background-color: var(--card-dark);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
         }
 
-        .question-title {
-            font-size: 1.1rem;
+        /* პროგრეს ბარი */
+        .progress-container {
+            width: 100%;
+            background-color: #334155;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 2%;
+            background: linear-gradient(to right, var(--accent-neon), var(--accent-green));
+            transition: width 0.4s ease;
+        }
+
+        .q-counter {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-bottom: 12px;
-            color: #2c3e50;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
 
-        .options-route {
+        .options-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 15px;
         }
 
-        @media(min-width: 600px) {
-            .options-route {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .option-label {
+        .option-card {
+            background: #334155;
+            padding: 18px;
+            border-radius: 10px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 12px;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            cursor: pointer;
+            border: 2px solid transparent;
             transition: all 0.2s ease;
         }
 
-        .option-label:hover {
-            background: #e9ecef;
-            border-color: #ced4da;
+        .option-card:hover {
+            background: #475569;
+            border-color: var(--accent-neon);
+            transform: translateX(5px);
         }
 
-        .option-label input {
-            margin-right: 10px;
-            transform: scale(1.2);
+        .option-card.selected {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
         }
 
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover {
-            background-color: #27ae60;
-        }
-
-        #result {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
+        .option-card input {
             display: none;
         }
 
-        .success { background-color: #d4edda; color: #155724; }
-
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: auto;
+        .option-prefix {
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--accent-neon);
         }
 
-        @media (max-width: 900px) {
-            .main-container {
-                flex-direction: column;
-            }
-            .sidebar {
-                position: static;
-                height: auto;
-                order: 2;
-            }
-            .quiz-container {
-                order: 1;
-            }
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            padding: 14px 35px;
+            background-color: var(--accent-neon);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-btn:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        /* შედეგის ეკრანი */
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .iq-score {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--accent-green);
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .iq-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background-color: #020617;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 950px) {
+            .main-container { flex-direction: column; }
+            .sidebar { order: 2; }
+            .quiz-wrapper { order: 1; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>ინტელექტუალური ქვიზი</h1>
-        <p>გამოცადე შენი ცოდნა 50 შეკითხვაში</p>
+        <h1>პროფესიონალური IQ ტესტი</h1>
+        <p style="color: var(--text-muted);">გაიგე შენი რეალური ინტელექტის დონე</p>
     </header>
 
     <div class="main-container">
+        <!-- მარცხენა სარეკლამო ზონა -->
         <aside class="sidebar">
-            <h3>რეკლამა</h3>
-            <p>საიტი დამზადებულია</p>
-            <strong style="font-size: 1.5rem; color: #4a90e2;">Teddy</strong>
-            <p>-ს მიერ</p>
+            <div class="adv-title">სპონსორის ბლოკი</div>
+            <div class="adv-box" style="color: #6366f1;">საიტი დამზადებულია Teddy-ს მიერ</div>
+            <div class="adv-box" style="color: var(--neon-pink);">სასწრაფო ნიუსი:<br>მაფლო გეია!</div>
+            <div class="adv-box" style="font-size: 0.8rem; color: gray;">რეკლამა 1</div>
         </aside>
 
-        <main class="quiz-container">
-            <form id="quizForm">
-                <div id="quiz-questions"></div>
-                <button type="button" class="submit-btn" onclick="calculateResult()">შედეგის ნახვა</button>
-            </form>
-            <div id="result"></div>
+        <!-- ქვიზის კონტეინერი -->
+        <main class="quiz-wrapper">
+            <div id="quiz-screen">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="q-counter" id="qCounter">კითხვა 1 / 50</div>
+                <div class="question-text" id="qText">იტვირთება კითხვა...</div>
+                
+                <div class="options-container" id="optionsBox">
+                    <!-- პასუხები ჩაჯდება დინამიურად -->
+                </div>
+
+                <div class="controls">
+                    <button class="nav-btn" id="nextBtn" onclick="submitAnswer()">შემდეგი &rarr;</button>
+                </div>
+            </div>
+
+            <!-- შედეგები -->
+            <div id="result-screen">
+                <h2>ტესტირება დასრულებულია!</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">თქვენი ინტელექტუალური კოეფიციენტია:</p>
+                <div class="iq-score" id="iqValue">120</div>
+                <div class="iq-status" id="iqStatus">საშუალოზე მაღალი</div>
+                <p id="correctDetails" style="color: var(--text-muted);"></p>
+                
+                <div class="adv-box" style="margin-top: 30px; border: 2px dashed var(--neon-pink); display: inline-block; padding: 20px;">
+                     ყურადღება: საიტი დამზადებულია <strong>Teddy</strong>-ს მიერ და კიდევ ერთხელ შეგახსენებთ, რომ მაფლო გეია.
+                </div>
+            </div>
         </main>
 
+        <!-- მარჯვენა სარეკლამო ზონა -->
         <aside class="sidebar">
-            <h3>რეკლამა</h3>
-            <p>საიტი დამზადებულია</p>
-            <strong style="font-size: 1.5rem; color: #4a90e2;">Teddy</strong>
-            <p>-ს მიერ</p>
+            <div class="adv-title">VIP რეკლამა</div>
+            <div class="adv-box" style="color: var(--neon-pink);">FLASH NEWS:<br>მაფლო გეია!</div>
+            <div class="adv-box" style="color: #6366f1;">Created by Teddy</div>
+            <div class="adv-box" style="color: #e2e8f0; font-size: 0.85rem;">დაატესტე მეგობრებიც!</div>
         </aside>
     </div>
 
     <footer>
-        <p>&copy; 2026 ყველა უფლება დაცულია | საიტი დამზადებულია Teddy-ს მიერ</p>
+        <p>&copy; 2026 დამზადებულია Teddy-ს მიერ | შეხსენება: მაფლო გეია | ყველა უფლება დაცულია</p>
     </footer>
 
     <script>
-        // 50 კითხვა ქართულად
+        // 50 კითხვა
         const questions = [
             { q: "რომელი პლანეტაა მზესთან ყველაზე ახლოს?", o: ["ვენერა", "მარსი", "მერკური", "იუპიტერი"], a: 2 },
             { q: "ვინ დაწერა 'ვეფხისტყაოსანი'?", o: ["აკაკი წერეთელი", "შოთა რუსთაველი", "ილია ჭავჭავაძე", "გალაკტიონი"], a: 1 },
@@ -232,15 +331,15 @@
             { q: "რომელია ყველაზე პატარა ქვეყანა მსოფლიოში?", o: ["მონაკო", "მალტა", "ვატიკანი", "სან-მარინო"], a: 2 },
             { q: "რომელ წელს დაიწყო მეორე მსოფლიო ომი?", o: ["1914", "1939", "1945", "1918"], a: 1 },
             { q: "რომელი ელემენტის სიმბოლოა 'Au'?", o: ["ვერცხლი", "რკინა", "ოქრო", "სპილენძი"], a: 2 },
-            { q: "რომელი ენაა ყველაზე გავრცელებული მსოფლიოში მშობლიური ენის მიხედვით?", o: ["ინგლისური", "ესპანური", "ჩინური (მანდარინი)", "ჰინდი"], a: 2 },
+            { q: "რომელი ენაა ყველაზე გავრცელებული მსოფლიოში?", o: ["ინგლისური", "ესპანური", "ჩინური", "ჰინდი"], a: 2 },
             { q: "რომელი ქალაქია იტალიის დედაქალაქი?", o: ["მილანი", "ვენეცია", "რომი", "ფლორენცია"], a: 2 },
             { q: "რამდენი გრადუსია მართი კუთხე?", o: ["45°", "90°", "180°", "360°"], a: 1 },
             { q: "რომელი ქვეყანაა ცნობილი 'ამომავალი მზის' ქვეყნად?", o: ["ჩინეთი", "იაპონია", "კორეა", "ინდოეთი"], a: 1 },
             { q: "რომელია ყველაზე დიდი ძუძუმწოვარი დედამიწაზე?", o: ["ლურჯი ვეშაპი", "აფრიკული სპილო", "ჟირაფი", "თეთრი დათვი"], a: 0 },
-            { q: "ვინ იყო პირველი ადამიანი კოსმოსში?", o: ["ნილ არმსტრონგი", "იური გაგარინი", "ბზ ოლდრინი", "ჯონ გლენი"], a: 1 },
+            { q: "ვინ იყო პირველი ადამიანი კოსმოსში?", o: ["ნილ არმსტრონგი", "იური გაგარინი", "ბაზ ოლდრინი", "ჯონ გლენი"], a: 1 },
             { q: "რომელი მდინარეა ყველაზე გრძელი მსოფლიოში?", o: ["ამაზონი", "ნილოსი", "მისისიპი", "იანძი"], a: 1 },
             { q: "რა ჰქვია საქართველოს უძველეს დედაქალაქს?", o: ["თელავი", "გორი", "მცხეთა", "ქუთაისი"], a: 2 },
-            { q: "რომელი ვიტამინითაა მდიდარი ციტრუსები (მაგ. ლიმონი, ფორთოხალი)?", o: ["ვიტამინი A", "ვიტამინი B", "ვიტამინი C", "ვიტამინი D"], a: 2 },
+            { q: "რომელი ვიტამინითაა მდიდარი ლიმონი?", o: ["ვიტამინი A", "ვიტამინი B", "ვიტამინი C", "ვიტამინი D"], a: 2 },
             { q: "რომელი თამაშია ცნობილი როგორც 'სპორტის დედოფალი'?", o: ["ფეხბურთი", "კალათბურთი", "მძლეოსნობა", "ჭადრაკი"], a: 2 },
             { q: "რომელ კონტინენტზე მდებარეობს ეგვიპტე?", o: ["აზია", "ევროპა", "აფრიკა", "ამერიკა"], a: 2 },
             { q: "ვინ იყო აშშ-ის პირველი პრეზიდენტი?", o: ["აბრაამ ლინკოლნი", "ჯორჯ ვაშინგტონი", "თომას ჯეფერსონი", "ბენჯამინ ფრანკლინი"], a: 1 },
@@ -249,83 +348,110 @@
             { q: "რამდენი ფერია ცისარტყელაში?", o: ["5", "6", "7", "8"], a: 2 },
             { q: "რომელი მწერლის შექმნილია პერსონაჟი 'შერლოკ ჰოლმსი'?", o: ["აგათა კრისტი", "არტურ კონან დოილი", "მარკ ტვენი", "ჩარლზ დიკენსი"], a: 1 },
             { q: "რომელი ქვეყნის ეროვნული სიმბოლოა კენგურუ?", o: ["კანადა", "ავსტრალია", "ახალი ზელანდია", "სამხრეთ აფრიკა"], a: 1 },
-            { q: "რომელი სრულიად ქართული სამეფოს პირველი მეფე იყო ბაგრატ III?", o: ["მართალია", "არასწორია", "იყო კახეთის მეფე", "იყო ჰერეთის მეფე"], a: 0 },
+            { q: "ბაგრატ III იყო თუ არა ერთიანი საქართველოს პირველი მეფე?", o: ["კი", "არა", "მხოლოდ კახეთის", "მხოლოდ აფხაზეთის"], a: 0 },
             { q: "რა არის დედამიწის ბუნებრივი თანამგზავრი?", o: ["მზე", "მარსი", "მთვარე", "ვენერა"], a: 2 },
             { q: "რომელი მეფეა ცნობილი ფსევდონიმით 'აღმაშენებელი'?", o: ["გიორგი III", "თამარ მეფე", "დავით IV", "ერეკლე II"], a: 2 },
-            { q: "რომელ ორგანოში ხდება საკვების ძირითადი მონელება?", o: ["კუჭი", "ფილტვი", "თირკმელი", "ელენთა"], a: 0 },
+            { q: "რომელ ორგანოში იწყება საკვების მონელება?", o: ["პირის ღრუში", "კუჭში", "წვრილ ნაწლავში", "ღვიძლში"], a: 0 },
             { q: "რომელია ყველაზე სწრაფი ხმელეთის ცხოველი?", o: ["ლომი", "ავაზა (გეპარდი)", "ანტილოპა", "მგელი"], a: 1 },
-            { q: "რომელ წელს დაიშალა საბჭოთა კავშირი (სსრკ)?", o: ["1989", "1991", "1993", "1995"], a: 1 },
+            { q: "რომელ წელს დაიშალა საბჭოთა კავშირი?", o: ["1989", "1991", "1993", "1995"], a: 1 },
             { q: "რომელი ევროპული ქვეყნის ფორმა ჰგავს ჩექმას?", o: ["ესპანეთი", "საბერძნეთი", "იტალია", "პორტუგალია"], a: 2 },
             { q: "ვინ გამოიგონა ტელეფონი?", o: ["თომას ედისონმა", "ალექსანდრ ბელმა", "ნიკოლა ტესლამ", "ალბერტ აინშტაინმა"], a: 1 },
-            { q: "რომელი მთაა ყველაზე მაღალი საქართველოში?", o: ["ყაზბეგი", "შხარა", "უჯბა", "ტეთნულდი"], a: 1 },
+            { q: "რომელი მთაა ყველაზე მაღალი საქართველოში?", o: ["ყაზბეგი", "შხარა", "უჯბა", "თეთნულდი"], a: 1 },
             { q: "რა ჰქვია გეომეტრიულ ფიგურას, რომელსაც 5 კუთხე აქვს?", o: ["ოთხკუთხედი", "ხუთკუთხედი", "ექვსკუთხედი", "სამკუთხედი"], a: 1 },
             { q: "რომელი ოკეანე ესაზღვრება ინდოეთს სამხრეთიდან?", o: ["წყნარი", "ატლანტის", "ინდოეთის", "არქტიკული"], a: 2 },
             { q: "ვინ დაწერა მოთხრობა 'კაცია-ადამიანი?!'?", o: ["აკაკი წერეთელი", "ალექსანდრე ყაზბეგი", "ილია ჭავჭავაძე", "ვაჟა-ფშაველა"], a: 2 },
             { q: "რამდენი წუთია ერთ საათში?", o: ["50", "60", "100", "24"], a: 1 },
-            { q: "რომელი სოციალური ქსელი შეიქმნა მარკ ცუკერბერგის მიერ?", o: ["X (Twitter)", "Instagram", "Facebook", "TikTok"], a: 2 },
+            { q: "რომელი სოციალური ქსელი შეიქმნა მარკ ცუკერბერგის მიერ?", o: ["X", "Instagram", "Facebook", "TikTok"], a: 2 },
             { q: "რა ჰქვია ატომის ცენტრალურ ნაწილს?", o: ["ელექტრონი", "პროტონი", "ბირთვი", "ნეიტრონი"], a: 2 }
         ];
 
-        // კითხვების გენერირება HTML-ში
-        const questionsContainer = document.getElementById('quiz-questions');
-        questions.forEach((item, index) => {
-            const questionBlock = document.createElement('div');
-            questionBlock.className = 'question-block';
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        const prefixes = ["A", "B", "C", "D"];
+
+        function loadQuestion() {
+            selectedAnswer = null;
+            const qContainer = document.getElementById('qCounter');
+            const qText = document.getElementById('qText');
+            const optionsBox = document.getElementById('optionsBox');
+            const progressBar = document.getElementById('progressBar');
+
+            // განახლდეს პროგრეს ბარი და ტექსტი
+            qContainer.innerText = `კითხვა ${currentQuestion + 1} / ${questions.length}`;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
             
-            const title = document.createElement('div');
-            title.className = 'question-title';
-            title.innerText = `${index + 1}. ${item.q}`;
-            questionBlock.appendChild(title);
-            
-            const optionsRoute = document.createElement('div');
-            optionsRoute.className = 'options-route';
-            
-            item.o.forEach((option, oIndex) => {
-                const label = document.createElement('label');
-                label.className = 'option-label';
-                
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = `question${index}`;
-                input.value = oIndex;
-                
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(option));
-                optionsRoute.appendChild(label);
+            const currentQData = questions[currentQuestion];
+            qText.innerText = currentQData.q;
+
+            // ვასუფთავებთ ძველ ვარიანტებს
+            optionsBox.innerHTML = "";
+
+            // ვსვამთ ახალ ვარიანტებს
+            currentQData.o.forEach((option, index) => {
+                const card = document.createElement('div');
+                card.className = "option-card";
+                card.onclick = () => selectOption(index, card);
+
+                card.innerHTML = `
+                    <div class="option-prefix">${prefixes[index]}</div>
+                    <div>${option}</div>
+                `;
+                optionsBox.appendChild(card);
             });
-            
-            questionBlock.appendChild(optionsRoute);
-            questionsContainer.appendChild(questionBlock);
-        });
+        }
 
-        // შედეგის გამოთვლა
-        function calculateResult() {
-            let score = 0;
-            let answeredCount = 0;
+        function selectOption(index, element) {
+            selectedAnswer = index;
+            // მოვაცილოთ მონიშვნა სხვა ვარიანტებს
+            const allCards = document.querySelectorAll('.option-card');
+            allCards.forEach(c => c.classList.remove('selected'));
+            // მოვნიშნოთ მიმდინარე
+            element.classList.add('selected');
+        }
 
-            questions.forEach((item, index) => {
-                const selected = document.querySelector(`input[name="question${index}"]:checked`);
-                if (selected) {
-                    answeredCount++;
-                    if (parseInt(selected.value) === item.a) {
-                        score++;
-                    }
-                }
-            });
-
-            if (answeredCount < questions.length) {
-                alert(`გთხოვთ უპასუხოთ ყველა კითხვას! (შევსებულია: ${answeredCount}/${questions.length})`);
+        function submitAnswer() {
+            if (selectedAnswer === null) {
+                alert("გთხოვთ, აირჩიოთ ერთ-ერთი პასუხი გადასვლამდე!");
                 return;
             }
 
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'block';
-            resultDiv.className = 'success';
-            resultDiv.innerHTML = `თქვენი შედეგია: ${score} / ${questions.length}-დან!<br><span style="font-size: 1rem; font-weight: normal;">მადლობა ქვიზის შევსებისთვის!</span>`;
-            
-            // ავტომატურად აიწევს ეკრანი შედეგის სანახავად
-            resultDiv.scrollIntoView({ behavior: 'smooth' });
+            // ქულის შემოწმება
+            if (selectedAnswer === questions[currentQuestion].a) {
+                score++;
+            }
+
+            // შემდეგ კითხვაზე გადასვლა ან დასრულება
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
         }
+
+        function showResults() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            // IQ ფორმულა: ბაზა არის 70, თითო სწორი პასუხი ამატებს 1.6-ს. (50 სწორი = 150 IQ)
+            let iqCalculated = 70 + Math.round(score * 1.6);
+            
+            let statusText = "";
+            if(iqCalculated >= 140) statusText = "გენიოსი (Super Genius) 🧠";
+            else if(iqCalculated >= 120) statusText = "უმაღლესი ინტელექტი 🚀";
+            else if(iqCalculated >= 100) statusText = "საშუალო/ნორმალური ინტელექტი 👍";
+            else if(iqCalculated >= 85) statusText = "დაბალი ინტელექტი 😐";
+            else statusText = "სუსტი კოგნიტური უნარები 📉";
+
+            document.getElementById('iqValue').innerText = iqCalculated;
+            document.getElementById('iqStatus').innerText = statusText;
+            document.getElementById('correctDetails').innerText = `თქვენ სწორად უპასუხეთ ${score} კითხვას 50-დან.`;
+        }
+
+        // ტესტის გაშვება ჩატვირთვისას
+        window.onload = loadQuestion;
     </script>
 </body>
 </html>
