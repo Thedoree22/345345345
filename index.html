@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ზოგადი ინტელექტის ქვიზი</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background-color: #fff;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 200px;
+            height: 400px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .quiz-container {
+            flex: 3;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .options-route {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media(min-width: 600px) {
+            .options-route {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:hover {
+            background: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #27ae60;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: none;
+        }
+
+        .success { background-color: #d4edda; color: #155724; }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: static;
+                height: auto;
+                order: 2;
+            }
+            .quiz-container {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ინტელექტუალური ქვიზი</h1>
+        <p>გამოცადე შენი ცოდნა 50 შეკითხვაში</p>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>რეკლამა</h3>
+            <p>საიტი დამზადებულია</p>
+            <strong style="font-size: 1.5rem; color: #4a90e2;">Teddy</strong>
+            <p>-ს მიერ</p>
+        </aside>
+
+        <main class="quiz-container">
+            <form id="quizForm">
+                <div id="quiz-questions"></div>
+                <button type="button" class="submit-btn" onclick="calculateResult()">შედეგის ნახვა</button>
+            </form>
+            <div id="result"></div>
+        </main>
+
+        <aside class="sidebar">
+            <h3>რეკლამა</h3>
+            <p>საიტი დამზადებულია</p>
+            <strong style="font-size: 1.5rem; color: #4a90e2;">Teddy</strong>
+            <p>-ს მიერ</p>
+        </aside>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ყველა უფლება დაცულია | საიტი დამზადებულია Teddy-ს მიერ</p>
+    </footer>
+
+    <script>
+        // 50 კითხვა ქართულად
+        const questions = [
+            { q: "რომელი პლანეტაა მზესთან ყველაზე ახლოს?", o: ["ვენერა", "მარსი", "მერკური", "იუპიტერი"], a: 2 },
+            { q: "ვინ დაწერა 'ვეფხისტყაოსანი'?", o: ["აკაკი წერეთელი", "შოთა რუსთაველი", "ილია ჭავჭავაძე", "გალაკტიონი"], a: 1 },
+            { q: "რომელია დედამიწის ყველაზე დიდი ოკეანე?", o: ["ატლანტის", "ინდოეთის", "წყნარი", "ჩრდილო ყინულოვანი"], a: 2 },
+            { q: "რომელი წლის 26 მაისს გამოცხადდა საქართველოს დამოუკიდებლობა?", o: ["1918", "1921", "1991", "1989"], a: 0 },
+            { q: "რა არის წყლის ქიმიური ფორმულა?", o: ["CO2", "H2O", "NaCl", "O2"], a: 1 },
+            { q: "რომელი ქვეყნის დედაქალაქია პარიზი?", o: ["გერმანია", "იტალია", "ესპანეთი", "საფრანგეთი"], a: 3 },
+            { q: "რამდენი ასოა ქართულ ანბანში?", o: ["39", "33", "26", "35"], a: 1 },
+            { q: "ვინ აღმოაჩინა ამერიკა?", o: ["ვასკო და გამა", "ფერნანდო მაგელანი", "ქრისტეფორე კოლუმბი", "ჯეიმს კუკი"], a: 2 },
+            { q: "რომელი კონტინენტია ყველაზე ცივი?", o: ["აფრიკა", "აზია", "ანტარქტიდა", "ავსტრალია"], a: 2 },
+            { q: "რომელია ყველაზე მაღალი მთა დედამიწაზე?", o: ["ევერესტი", "მონბლანი", "ყაზბეგი", "კილიმანჯარო"], a: 0 },
+            { q: "რომელი ორგანო სისხლს ტუმბავს ადამიანის ორგანიზმში?", o: ["ფილტვი", "ღვიძლი", "ტვინი", "გული"], a: 3 },
+            { q: "ვინ დახატა 'მონა ლიზა'?", o: ["ვან გოგი", "ლეონარდო და ვინჩი", "პაბლო პიკასო", "მიქელანჯელო"], a: 1 },
+            { q: "რა ჰქვია საქართველოს ამჟამინდელ დედაქალაქს?", o: ["ქუთაისი", "ბათუმი", "თბილისი", "მცხეთა"], a: 2 },
+            { q: "რამდენი კონტინენტია დედამიწაზე?", o: ["5", "6", "7", "8"], a: 2 },
+            { q: "რომელი ცხოველია ცნობილი როგორც 'უდაბნოს ხომალდი'?", o: ["ცხენი", "აქლემი", "სპილო", "ლომი"], a: 1 },
+            { q: "რომელია ყველაზე პატარა ქვეყანა მსოფლიოში?", o: ["მონაკო", "მალტა", "ვატიკანი", "სან-მარინო"], a: 2 },
+            { q: "რომელ წელს დაიწყო მეორე მსოფლიო ომი?", o: ["1914", "1939", "1945", "1918"], a: 1 },
+            { q: "რომელი ელემენტის სიმბოლოა 'Au'?", o: ["ვერცხლი", "რკინა", "ოქრო", "სპილენძი"], a: 2 },
+            { q: "რომელი ენაა ყველაზე გავრცელებული მსოფლიოში მშობლიური ენის მიხედვით?", o: ["ინგლისური", "ესპანური", "ჩინური (მანდარინი)", "ჰინდი"], a: 2 },
+            { q: "რომელი ქალაქია იტალიის დედაქალაქი?", o: ["მილანი", "ვენეცია", "რომი", "ფლორენცია"], a: 2 },
+            { q: "რამდენი გრადუსია მართი კუთხე?", o: ["45°", "90°", "180°", "360°"], a: 1 },
+            { q: "რომელი ქვეყანაა ცნობილი 'ამომავალი მზის' ქვეყნად?", o: ["ჩინეთი", "იაპონია", "კორეა", "ინდოეთი"], a: 1 },
+            { q: "რომელია ყველაზე დიდი ძუძუმწოვარი დედამიწაზე?", o: ["ლურჯი ვეშაპი", "აფრიკული სპილო", "ჟირაფი", "თეთრი დათვი"], a: 0 },
+            { q: "ვინ იყო პირველი ადამიანი კოსმოსში?", o: ["ნილ არმსტრონგი", "იური გაგარინი", "ბზ ოლდრინი", "ჯონ გლენი"], a: 1 },
+            { q: "რომელი მდინარეა ყველაზე გრძელი მსოფლიოში?", o: ["ამაზონი", "ნილოსი", "მისისიპი", "იანძი"], a: 1 },
+            { q: "რა ჰქვია საქართველოს უძველეს დედაქალაქს?", o: ["თელავი", "გორი", "მცხეთა", "ქუთაისი"], a: 2 },
+            { q: "რომელი ვიტამინითაა მდიდარი ციტრუსები (მაგ. ლიმონი, ფორთოხალი)?", o: ["ვიტამინი A", "ვიტამინი B", "ვიტამინი C", "ვიტამინი D"], a: 2 },
+            { q: "რომელი თამაშია ცნობილი როგორც 'სპორტის დედოფალი'?", o: ["ფეხბურთი", "კალათბურთი", "მძლეოსნობა", "ჭადრაკი"], a: 2 },
+            { q: "რომელ კონტინენტზე მდებარეობს ეგვიპტე?", o: ["აზია", "ევროპა", "აფრიკა", "ამერიკა"], a: 2 },
+            { q: "ვინ იყო აშშ-ის პირველი პრეზიდენტი?", o: ["აბრაამ ლინკოლნი", "ჯორჯ ვაშინგტონი", "თომას ჯეფერსონი", "ბენჯამინ ფრანკლინი"], a: 1 },
+            { q: "რომელია ყველაზე დიდი ქვეყანა ფართობის მიხედვით?", o: ["კანადა", "აშშ", "ჩინეთი", "რუსეთი"], a: 3 },
+            { q: "რა ჰქვია თოვლის კაცს ჰიმალაის მთებში?", o: ["ბიგფუტი", "იეტი", "გობლინი", "ტროლი"], a: 1 },
+            { q: "რამდენი ფერია ცისარტყელაში?", o: ["5", "6", "7", "8"], a: 2 },
+            { q: "რომელი მწერლის შექმნილია პერსონაჟი 'შერლოკ ჰოლმსი'?", o: ["აგათა კრისტი", "არტურ კონან დოილი", "მარკ ტვენი", "ჩარლზ დიკენსი"], a: 1 },
+            { q: "რომელი ქვეყნის ეროვნული სიმბოლოა კენგურუ?", o: ["კანადა", "ავსტრალია", "ახალი ზელანდია", "სამხრეთ აფრიკა"], a: 1 },
+            { q: "რომელი სრულიად ქართული სამეფოს პირველი მეფე იყო ბაგრატ III?", o: ["მართალია", "არასწორია", "იყო კახეთის მეფე", "იყო ჰერეთის მეფე"], a: 0 },
+            { q: "რა არის დედამიწის ბუნებრივი თანამგზავრი?", o: ["მზე", "მარსი", "მთვარე", "ვენერა"], a: 2 },
+            { q: "რომელი მეფეა ცნობილი ფსევდონიმით 'აღმაშენებელი'?", o: ["გიორგი III", "თამარ მეფე", "დავით IV", "ერეკლე II"], a: 2 },
+            { q: "რომელ ორგანოში ხდება საკვების ძირითადი მონელება?", o: ["კუჭი", "ფილტვი", "თირკმელი", "ელენთა"], a: 0 },
+            { q: "რომელია ყველაზე სწრაფი ხმელეთის ცხოველი?", o: ["ლომი", "ავაზა (გეპარდი)", "ანტილოპა", "მგელი"], a: 1 },
+            { q: "რომელ წელს დაიშალა საბჭოთა კავშირი (სსრკ)?", o: ["1989", "1991", "1993", "1995"], a: 1 },
+            { q: "რომელი ევროპული ქვეყნის ფორმა ჰგავს ჩექმას?", o: ["ესპანეთი", "საბერძნეთი", "იტალია", "პორტუგალია"], a: 2 },
+            { q: "ვინ გამოიგონა ტელეფონი?", o: ["თომას ედისონმა", "ალექსანდრ ბელმა", "ნიკოლა ტესლამ", "ალბერტ აინშტაინმა"], a: 1 },
+            { q: "რომელი მთაა ყველაზე მაღალი საქართველოში?", o: ["ყაზბეგი", "შხარა", "უჯბა", "ტეთნულდი"], a: 1 },
+            { q: "რა ჰქვია გეომეტრიულ ფიგურას, რომელსაც 5 კუთხე აქვს?", o: ["ოთხკუთხედი", "ხუთკუთხედი", "ექვსკუთხედი", "სამკუთხედი"], a: 1 },
+            { q: "რომელი ოკეანე ესაზღვრება ინდოეთს სამხრეთიდან?", o: ["წყნარი", "ატლანტის", "ინდოეთის", "არქტიკული"], a: 2 },
+            { q: "ვინ დაწერა მოთხრობა 'კაცია-ადამიანი?!'?", o: ["აკაკი წერეთელი", "ალექსანდრე ყაზბეგი", "ილია ჭავჭავაძე", "ვაჟა-ფშაველა"], a: 2 },
+            { q: "რამდენი წუთია ერთ საათში?", o: ["50", "60", "100", "24"], a: 1 },
+            { q: "რომელი სოციალური ქსელი შეიქმნა მარკ ცუკერბერგის მიერ?", o: ["X (Twitter)", "Instagram", "Facebook", "TikTok"], a: 2 },
+            { q: "რა ჰქვია ატომის ცენტრალურ ნაწილს?", o: ["ელექტრონი", "პროტონი", "ბირთვი", "ნეიტრონი"], a: 2 }
+        ];
+
+        // კითხვების გენერირება HTML-ში
+        const questionsContainer = document.getElementById('quiz-questions');
+        questions.forEach((item, index) => {
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block';
+            
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.innerText = `${index + 1}. ${item.q}`;
+            questionBlock.appendChild(title);
+            
+            const optionsRoute = document.createElement('div');
+            optionsRoute.className = 'options-route';
+            
+            item.o.forEach((option, oIndex) => {
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `question${index}`;
+                input.value = oIndex;
+                
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                optionsRoute.appendChild(label);
+            });
+            
+            questionBlock.appendChild(optionsRoute);
+            questionsContainer.appendChild(questionBlock);
+        });
+
+        // შედეგის გამოთვლა
+        function calculateResult() {
+            let score = 0;
+            let answeredCount = 0;
+
+            questions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selected) {
+                    answeredCount++;
+                    if (parseInt(selected.value) === item.a) {
+                        score++;
+                    }
+                }
+            });
+
+            if (answeredCount < questions.length) {
+                alert(`გთხოვთ უპასუხოთ ყველა კითხვას! (შევსებულია: ${answeredCount}/${questions.length})`);
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'success';
+            resultDiv.innerHTML = `თქვენი შედეგია: ${score} / ${questions.length}-დან!<br><span style="font-size: 1rem; font-weight: normal;">მადლობა ქვიზის შევსებისთვის!</span>`;
+            
+            // ავტომატურად აიწევს ეკრანი შედეგის სანახავად
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
